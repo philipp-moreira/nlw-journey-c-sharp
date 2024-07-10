@@ -7,7 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ResourceErrorMessages.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="ExceptionsBase\" />
+    <Folder Include="Messages/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="ResourceErrorMessages.cs" />
   </ItemGroup>
 
 </Project>

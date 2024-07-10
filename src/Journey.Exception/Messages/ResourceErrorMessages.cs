@@ -1,0 +1,8 @@
+namespace Journey.Exception.Messages;
+
+public static class ResourceErrorMessages
+{
+    public static string NAME_EMPTY { get; } = "The name can´t be empty.";
+    public static string DATE_TRIP_MUST_BE_LATER_THAN_TODAY { get; } = "The date of the trip must be later than today.";
+    public static string END_DATE_TRIP_MUST_BE_LATER_START_DATE { get; } = "The end date of the drip must be equal or later than the start date.";
+}
