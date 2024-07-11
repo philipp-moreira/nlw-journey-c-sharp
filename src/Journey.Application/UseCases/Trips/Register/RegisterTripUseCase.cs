@@ -1,11 +1,10 @@
 ﻿using Journey.Communication.Requests;
 using Journey.Communication.Responses;
-using Journey.Exception.ExceptionsBase;
-using Journey.Exception.Messages;
+using Journey.Exception;
 using Journey.Infrastructure;
 using Journey.Infrastructure.Entities;
 
-namespace Journey.Application;
+namespace Journey.Application.UseCases.Trips.Register;
 
 public class RegisterTripUseCase
 {
@@ -37,19 +36,13 @@ public class RegisterTripUseCase
 
     private void Validate(RequestRegisterTripJson trip)
     {
-        if (string.IsNullOrWhiteSpace(trip.Name))
-        {
-            throw new JourneyException(ResourceErrorMessages.NAME_EMPTY);
-        }
+        var validator = new RegisterTripValidator();
+        var validationResult = validator.Validate(trip);
 
-        if (trip.StartDate.Date < DateTime.UtcNow.Date)
+        if (!validationResult.IsValid)
         {
-            throw new JourneyException(ResourceErrorMessages.DATE_TRIP_MUST_BE_LATER_THAN_TODAY);
-        }
-
-        if (trip.EndDate.Date < trip.StartDate.Date)
-        {
-            throw new JourneyException(ResourceErrorMessages.END_DATE_TRIP_MUST_BE_LATER_START_DATE);
+            var errors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
+            throw new ErrorOnValidationException(errors);
         }
     }
 }
