@@ -1,4 +1,7 @@
-﻿using Journey.Application.UseCases.Trips.GetAll;
+﻿using Journey.Application.UseCases.Activities.Complete;
+using Journey.Application.UseCases.Activities.Register;
+using Journey.Application.UseCases.Activities.Remove;
+using Journey.Application.UseCases.Trips.GetAll;
 using Journey.Application.UseCases.Trips.GetById;
 using Journey.Application.UseCases.Trips.Register;
 using Journey.Application.UseCases.Trips.Remove;
@@ -12,6 +15,7 @@ namespace Journey.Api.Controllers;
 [Route("api/[controller]")]
 public class TripsController : ControllerBase
 {
+    #region Trips
     [HttpGet]
     [ProducesResponseType<ResponseTripsJson>(StatusCodes.Status200OK)]
     [ProducesResponseType<ResponseErrorsJson>(StatusCodes.Status500InternalServerError)]
@@ -60,4 +64,48 @@ public class TripsController : ControllerBase
 
         return NoContent();
     }
+    #endregion
+
+    #region Activities
+
+    [HttpPost]
+    [Route("{tripId}/activity")]
+    [ProducesResponseType<ResponseActivityJson>(StatusCodes.Status201Created)]
+    [ProducesResponseType<ResponseErrorsJson>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ResponseErrorsJson>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ResponseErrorsJson>(StatusCodes.Status500InternalServerError)]
+    public IActionResult RegisterActivity([FromRoute] Guid tripId, [FromBody] RequestRegisterActivityJson request)
+    {
+        var useCase = new RegisterActivityForTripUseCase();
+        var result = useCase.Execute(tripId, request);
+
+        return Created(string.Empty, result);
+    }
+
+    [HttpPut]
+    [Route("{tripId}/activity/{activityId}/complete")]
+    [ProducesResponseType<ResponseActivityJson>(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ResponseErrorsJson>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ResponseErrorsJson>(StatusCodes.Status500InternalServerError)]
+    public IActionResult CompleteActivity([FromRoute] Guid tripId, [FromRoute] Guid activityId)
+    {
+        var useCase = new CompleteActivityForTripUseCase();
+        useCase.Execute(tripId, activityId);
+
+        return NoContent();
+    }
+
+    [HttpDelete]
+    [Route("{tripId}/activity/{activityId}")]
+    [ProducesResponseType<ResponseActivityJson>(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ResponseErrorsJson>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ResponseErrorsJson>(StatusCodes.Status500InternalServerError)]
+    public IActionResult RemoveActivity([FromRoute] Guid tripId, [FromRoute] Guid activityId)
+    {
+        var useCase = new DeleteActivityForTripUseCase();
+        useCase.Execute(tripId, activityId);
+
+        return NoContent();
+    }
+    #endregion
 }
